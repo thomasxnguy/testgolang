@@ -1,0 +1,10 @@
+server:
+  network: tcp4 # Following values maybe used : "tcp", "tcp4", "tcp6", "unix" or "unixpacket"
+  listenOn: :8080
+  enableTls: false
+  keyFile:
+  certFile:
+logging:
+  output: discard # Following values maybe used : stderr, stdout, file, discard - it discards logs to /dev/null
+  logFile: todofinder.log  # if file is used for output, log file path should be provided using logFile
+  level: info
