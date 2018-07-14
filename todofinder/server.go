@@ -2,33 +2,32 @@ package todofinder
 
 import (
 	"github.com/valyala/fasthttp"
+	"github.com/sirupsen/logrus"
 	"net"
 	. "todofinder/todofinder/error"
 	. "todofinder/todofinder/http"
+	. "todofinder/todofinder/app"
+	"fmt"
 )
 
-//Name of the service
+//Constant defining name of the service.
 const (
-	ServerName  = "todofinder"
+	ServerName = "todofinder"
 )
 
 type Server struct {
 	config *Configuration
+	log    *logrus.Logger
 }
 
-func (s *Server) Init(conf *Configuration) error {
-	s.config = conf
-	return nil
-}
-
-func (s *Server) getListener() (net.Listener, error) {
-	ln, err := net.Listen(s.config.Network, s.config.ListenOn)
-	//log port
-	if err != nil {
-		//log
-		return nil, err
+//Init initialize the server
+func (s *Server) Init(c *Configuration, l *logrus.Logger) error {
+	if c == nil || l == nil {
+		return fmt.Errorf("failed to initialize server, received nil parameters")
 	}
-	return ln, nil
+	s.config = c
+	s.log = l
+	return nil
 }
 
 func (s *Server) Run() error {
@@ -43,12 +42,12 @@ func (s *Server) Run() error {
 
 	if s.config.EnableTls {
 		if err := fhttps.ServeTLS(ln, s.config.CertFile, s.config.KeyFile); err != nil {
-			//Log.Log.WithField("func", "Run").Fatal("Error when serving incoming connections")
+			s.log.WithField("func", "Run").Fatal("Error when serving incoming connections")
 			return err
 		}
 	} else {
 		if err := fhttps.Serve(ln); err != nil {
-			//Log.Log.WithField("func", "Run").Fatal("Error when serving incoming connections")
+			s.log.WithField("func", "Run").Fatal("Error when serving incoming connections")
 			return err
 		}
 	}
@@ -56,31 +55,48 @@ func (s *Server) Run() error {
 	return nil
 }
 
-//Run requestHandler with error handling
+func (s *Server) getListener() (net.Listener, error) {
+	ln, err := net.Listen(s.config.Network, s.config.ListenOn)
+	s.log.WithField("func", "getListener").Debug("Server using %s and listening to port %s", s.config.Network, s.config.ListenOn)
+	if err != nil {
+		//log
+		return nil, err
+	}
+	return ln, nil
+}
+
+//Run requestHandler with error handling.
 func (s *Server) handler(ctx *fasthttp.RequestCtx) {
-	//log := &LoggerContext{}
-	//log.init("todofinder", ctx)
+	defer s.panicHandler(ctx)
 	err := Router(ctx)
 	if err != nil {
-		errorHandler(ctx, err)
+		s.errorHandler(ctx, err)
 	}
 }
 
-//Handle the error, return an http response error according to the error code
-func errorHandler(ctx *fasthttp.RequestCtx, e *Error) {
+// errorHandler handle the error if request return an error.
+// It returns an http response error according to the error code.
+func (s *Server) errorHandler(ctx *fasthttp.RequestCtx, e *Error) {
 	if e.Error != nil {
-		//LogDebugWithFields(ctx, logrus.Fields{"func": "ErrorHandler"}, "Return Error", e.Error)
+		s.log.WithField("func", "errorHandler").Debug("Receive error %v", e)
 	}
 	if e.ErrorCode == "" {
-		//LogDebugWithFields(ctx, logrus.Fields{"func": "ErrorHandler"}, "Return Error", e.Error)
-		e.ErrorCode = SERVER_ERROR
+		e.ErrorCode = INTERNAL_SERVER_ERROR
 	}
-	errorMessage := ErrorMessages[e.ErrorCode]
-	errorHttpResponse := &ErrorHttpResponse{errorMessage.ErrorMessage, e.ErrorCode, errorMessage.HttpStatus}
-	ctx.Error(errorHttpResponse.ToJson(), errorHttpResponse.HttpStatus)
+	msg := e.GetMessage()
+	status := Templates[e.ErrorCode].HttpStatus
+	errorHttpResponse := &HttpError{e.ErrorCode, msg, status}
+	ers, e := errorHttpResponse.ToJson()
+	ctx.Error(ers, status)
 	//Need to set the content type and headers which have been reset by the previous method
 	ctx.SetContentType(CONTENT_TYPE_JSON)
-	ctx.Response.Header.Add(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
-	ctx.Response.Header.Add(ACCESS_CONTROL_ALLOW_METHOD, "*")
-	ctx.Response.Header.Add(ACCESS_CONTROL_ALLOW_HEADERS, "*")
+}
+
+// panicHandler prevents the server from exiting from a panic.
+// It returns a HTTP 500 error to the end-users.
+func (s *Server) panicHandler(ctx *fasthttp.RequestCtx) {
+	if rcv := recover(); rcv != nil {
+		err := &Error{INTERNAL_SERVER_ERROR, nil, fmt.Errorf("recover from panic: %v", rcv)}
+		s.errorHandler(ctx, err)
+	}
 }

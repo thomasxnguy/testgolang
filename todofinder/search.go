@@ -11,29 +11,34 @@ import (
 	"path/filepath"
 )
 
-//search result structure
+// SearchResult represent one result when parsing file in research of a pattern.
+// It collect essential data to display to end-users.
 type SearchResult struct {
-	fileName string `json:"file"`
-	position int    `json:"pos"`
-	comment  string `json:"com"`
-	Error    *Error
+	FileName string `json:"file"`
+	Position int    `json:"pos"`
+	Comment  string `json:"com"`
+	error    *Error
 }
 
-//Return a verbose message corresponding to the search result
+// ToString return a verbose message corresponding to the search result.
 func (s *SearchResult) ToString() string {
-	return fmt.Sprintf("%s:%v:\n%s\n", s.fileName, s.position, s.comment)
+	return fmt.Sprintf("%s:%v:\n%s\n", s.FileName, s.Position, s.Comment)
+}
+
+// GetError return error in result search.
+func (s *SearchResult) GetError() *Error {
+	return s.error
 }
 
 func ImportPkg(path, dir string) (*build.Package, *Error) {
-
 	//TODO Optimisation
 	p, err := build.Import(path, dir, build.ImportComment)
 	if err != nil {
-		return nil, &Error{PACKAGE_NOT_FOUND, err}
+		return nil, &Error{PACKAGE_NOT_FOUND, Params{"package": path}, err}
 	}
 	//if p.BinaryOnly &&
 	if p.IsCommand() {
-		return nil, &Error{NO_SOURCE, err}
+		return nil, &Error{NO_SOURCE, Params{"source": p.Name}, err}
 	}
 
 	return p, nil
@@ -45,7 +50,7 @@ func ExtractPattern(p *build.Package, pattern string, resultChannel chan *Search
 		fset := token.NewFileSet()
 		f, err := parser.ParseFile(fset, fname, nil, parser.ParseComments)
 		if err != nil {
-			resultChannel <- &SearchResult{"", 0, "", &Error{SOURCE_NOT_READABLE, err}}
+			resultChannel <- &SearchResult{"", 0, "", &Error{SOURCE_NOT_READABLE, Params{"source": fname}, err}}
 			return
 		}
 		cmap := ast.NewCommentMap(fset, f, f.Comments)

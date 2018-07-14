@@ -4,26 +4,27 @@ import (
 	"flag"
 	"os"
 	"fmt"
-	"todofinder/todofinder"
 	"io"
 	"io/ioutil"
+	"todofinder/todofinder"
+	. "todofinder/todofinder/error"
 )
 
-//todofinder search mode command tool properties
+// Todofinder search mode command tool properties.
 const (
 	CommandName  = "search"
 	Description  = "run in command line"
 	usageMessage = "%s [-package input_package] [-pattern input_pattern] \n"
 )
 
-//Options structure for search mode
+// Options structure for search mode.
 type option struct {
 	packageName string
 	pattern     string
 	flagSet     *flag.FlagSet
 }
 
-//Initialise command options for search mode
+// newOption initialise command options for search mode.
 func newOption(w io.Writer, eh flag.ErrorHandling) (opt *option) {
 	opt = &option{
 		flagSet: flag.NewFlagSet(CommandName, eh),
@@ -36,7 +37,7 @@ func newOption(w io.Writer, eh flag.ErrorHandling) (opt *option) {
 	return opt
 }
 
-//Validate the flags for search mode
+// parse validate the flags for search mode.
 func (opt *option) parse(args []string) (err error) {
 	if err = opt.flagSet.Parse(args); err != nil {
 		return
@@ -45,7 +46,7 @@ func (opt *option) parse(args []string) (err error) {
 	if nonFlag := opt.flagSet.Args(); len(nonFlag) != 0 {
 		return fmt.Errorf("invalid argument: %v", nonFlag)
 	}
-
+	//Check mandatory flags
 	if opt.packageName == "" {
 		return fmt.Errorf("missing flag: %v", "package")
 	}
@@ -56,7 +57,7 @@ func (opt *option) parse(args []string) (err error) {
 	return
 }
 
-//OptionCheck receives a slice of args and returns an error if it was not successfully parsed
+// OptionCheck receives a slice of args and returns an error if it was not successfully parsed.
 func OptionCheck(args []string) (err error) {
 	opt := newOption(ioutil.Discard, flag.ContinueOnError)
 	if e := opt.parse(args); e != nil {
@@ -65,20 +66,20 @@ func OptionCheck(args []string) (err error) {
 	return nil
 }
 
-// Provide usage for search mode
+// Usage provides usage message for search mode.
 func Usage() {
 	fmt.Printf(usageMessage, CommandName)
 }
 
-// Print the default flag for search mode
+// PrintDefaults prints the default flag for search mode.
 func PrintDefaults(eh flag.ErrorHandling) {
 	opt := newOption(os.Stderr, eh)
 	opt.flagSet.PrintDefaults()
 }
 
-// Execute todofinder search command
-// It receives arg from command line and validate them
-// and run the main command option
+// Run Execute todofinder search command.
+// It receives arg from command line and validate them.
+// It will then run the main command option.
 func Run(args []string) error {
 	opt := newOption(os.Stderr, flag.ExitOnError)
 	if e := opt.parse(args); e != nil {
@@ -89,11 +90,15 @@ func Run(args []string) error {
 	return command(opt)
 }
 
-// Search main execution program
+// Search main execution program.
 func command(opt *option) error {
+	err := LoadMessages("../conf/errors.yaml")
+	if err != nil {
+		return err
+	}
 	dir, err := os.Getwd()
 	if err != nil {
-		panic(err)
+		return err
 	}
 	if p, error := todofinder.ImportPkg(opt.packageName, dir); error == nil {
 		rch := make(chan *todofinder.SearchResult, 10)
@@ -102,14 +107,14 @@ func command(opt *option) error {
 			searchResult := <-rch
 			if searchResult == nil {
 				return nil
-			} else if searchResult.Error != nil {
-				return fmt.Errorf("%v, %v", CommandName, searchResult.Error.ToString())
+			} else if searchResult.GetError() != nil {
+				return fmt.Errorf("%v, %v", CommandName, searchResult.GetError().GetMessage())
 			} else {
 				fmt.Printf(searchResult.ToString())
 			}
 		}
 	} else {
-		return fmt.Errorf("%v, %v", CommandName, error.ToString())
+		return fmt.Errorf("%v, %v", CommandName, error.GetMessage())
 	}
 	return nil
 }

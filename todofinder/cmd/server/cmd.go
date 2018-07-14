@@ -4,23 +4,24 @@ import (
 	"flag"
 	"fmt"
 	. "todofinder/todofinder"
-	"log"
+	. "todofinder/todofinder/app"
+	. "todofinder/todofinder/error"
 )
 
-//todofinder server mode command tool properties
+// Todofinder command tool properties for server mode.
 const (
 	CommandName  = "server"
 	Description  = "run in server mode"
 	usageMessage = "%s [-config path_to_config] \n"
 )
 
-//Options structure for server mode
+// Options structure for server mode.
 type option struct {
 	configPath string
 	flagSet    *flag.FlagSet
 }
 
-//Initialise command options for server mode
+//n ewOption initialises the command options for server mode.
 func newOption(eh flag.ErrorHandling) (opt *option) {
 	opt = &option{
 		flagSet: flag.NewFlagSet(CommandName, eh),
@@ -31,7 +32,7 @@ func newOption(eh flag.ErrorHandling) (opt *option) {
 	return opt
 }
 
-//Validate the flags for server mode
+// parse validates the flags for server mode.
 func (opt *option) parse(args []string) (err error) {
 	if err = opt.flagSet.Parse(args); err != nil {
 		return
@@ -47,20 +48,20 @@ func (opt *option) parse(args []string) (err error) {
 	return
 }
 
-// Provide usage for server mode
+// Usage provides the usage message for server mode.
 func Usage() {
 	fmt.Printf(usageMessage, CommandName)
 }
 
-// Print the default flag for server mode
+// PrintDefaults prints the default flags for server mode.
 func PrintDefaults(eh flag.ErrorHandling) {
 	opt := newOption(eh)
 	opt.flagSet.PrintDefaults()
 }
 
-// Execute todofinder in server mode
-// It receives arg from command line and validate them
-// and run the command
+// Run executes todofinder in server mode.
+// It receives arg from command line and validate them.
+// It will then run the command.
 func Run(args []string) error {
 	opt := newOption(flag.ExitOnError)
 	if e := opt.parse(args); e != nil {
@@ -71,17 +72,26 @@ func Run(args []string) error {
 	return command(opt)
 }
 
-// Execute todofinder in server mode
+// Execute todofinder in server mode.
 func command(opt *option) error {
 	config, err := LoadConfiguration(&opt.configPath)
 	if err != nil {
 		return err
 	}
+	//error file location can be putted into global configuration file
+	err = LoadMessages("../conf/errors.yaml")
+	if err != nil {
+		return err
+	}
+	logger, err := LoadAppLogger(config)
+	if err != nil {
+		return err
+	}
 
 	server := &Server{}
-	server.Init(config)
-	if rerr := server.Run(); rerr != nil {
-		log.Fatal("[ERROR] Couldn't run: ", rerr)
+	if rerr := server.Init(config, logger); rerr != nil {
+		return fmt.Errorf("[ERROR] Couldn't run: %v", rerr)
 	}
+	server.Run()
 	return nil
 }

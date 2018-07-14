@@ -1,13 +1,15 @@
-Todo Finder Tool
+TodoFinder 
 ===
 
-todofinder is a tool helping to search for comment in packages containing a specific key pattern such as "TODO", "FIXME" etc.. and displays them 
-to the user in console.
-It also provide a server mode where it acts as a API server
+todofinder is a tool that search for comment containing a specific key pattern such as "TODO" or "FIXME" in golang packages, and display results to the end-user with essential informations (files name, lines, comments) 
+
+The tool has two execution mode :
+- search mode : results are display in console stdout. It is the mode by default 
+- server mode : service run as an API server on port 8080 by default
 
 
 ```
-$ go run todofinder.go -package fmt -pattern TODO
+$ go run todofinder/cmd/todofinder.go -package fmt -pattern TODO 
 /usr/local/go/src/fmt/scan.go : 740 :
 TODO： accept N and Ni independently?
 ```
@@ -66,7 +68,7 @@ Usage of server:
     	configuration file path
 ```
 
-#### Run Server Mode
+#### Run in server mode
 ```
 $ go run todofinder/cmd/todofinder.go server -config ../conf/todofinder.yaml
 
@@ -77,9 +79,32 @@ By default, application will run on port 8080
 ##### Example API request
 
 ```
-$ todofinder server -config ../conf/todofinder.yaml &
-$ curl -XGET localhost:8080/search?package=fmt&pattern=TODO .
+$ todofinder server -config ../conf/todofinder.yaml &amp;
+$ curl -XGET 'localhost:8080/search?package=fmt&amp;pattern=TODO' .
 {
+    "result": [
+        {
+            "file": "/usr/local/Cellar/go/1.6.3/libexec/src/fmt/format.go",
+            "pos": 332,
+            "com": "TODO: Avoid buffer by pre-padding.\n"
+        },
+        {
+            "file": "/usr/local/Cellar/go/1.6.3/libexec/src/fmt/scan.go",
+            "pos": 747,
+            "com": "TODO: accept N and Ni independently?\n"
+        }
+    ]
 }
 
 ```
+
+##### API Error codes
+
+
+| Command | Description |
+| --- | --- |
+| git status | List all new or modified files |
+| git diff | Show file differences that haven't been staged |
+
+
+

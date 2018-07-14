@@ -9,7 +9,7 @@ import (
 	"todofinder/todofinder/cmd/server"
 )
 
-//Structure containing todofinder modes and run methods
+// Structure containing todofinder modes and run methods.
 var (
 	mode = []struct {
 		Name        string
@@ -25,13 +25,13 @@ var (
 	}
 )
 
-//todofinder usage message
+// Usage will display todofinder usage message.
 func Usage() {
 	fmt.Printf("todofinder\n")
 	fmt.Printf("usage: %s <command>\n", filepath.Base(os.Args[0]))
 }
 
-// PrintDefaults prints out the default flags
+// PrintDefaults prints out the default flags for each commands.
 func PrintDefaults() {
 	fmt.Printf("The commands are:\n")
 	for _, m := range mode {
