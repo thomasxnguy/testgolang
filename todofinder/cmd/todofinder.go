@@ -48,7 +48,7 @@ func main() {
 		cmd     func([]string) error
 		options []string
 	)
-	//Command mode is provided
+	// Command mode is provided
 	if len(os.Args) >= 2 {
 		options = os.Args[2:]
 		for i := range mode {
@@ -57,7 +57,7 @@ func main() {
 			}
 		}
 	}
-	//Use default command (search)
+	// Use default command (search)
 	if cmd == nil {
 		options = os.Args[1:]
 		if e := search.OptionCheck(options); e != nil {
@@ -70,7 +70,7 @@ func main() {
 		}
 		cmd = search.Run
 	}
-	//Execute command
+	// Execute command
 	if e := cmd(options); e != nil {
 		fmt.Printf("%v\n", e)
 		os.Exit(1)

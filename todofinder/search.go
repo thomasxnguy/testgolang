@@ -30,13 +30,17 @@ func (s *SearchResult) GetError() *Error {
 	return s.error
 }
 
+// ImportPkg returns details about the Go package named by the import path,
+// interpreting local import paths relative to dir.
+// If the path is a local import path naming a package that can be imported
+// using a standard import path, the returned package will set p.ImportPath
+// to that path.
 func ImportPkg(path, dir string) (*build.Package, *Error) {
-	//TODO Optimisation
+	//TODO Optimisations can be done here
 	p, err := build.Import(path, dir, build.ImportComment)
 	if err != nil {
 		return nil, &Error{PACKAGE_NOT_FOUND, Params{"package": path}, err}
 	}
-	//if p.BinaryOnly &&
 	if p.IsCommand() {
 		return nil, &Error{NO_SOURCE, Params{"source": p.Name}, err}
 	}
@@ -44,6 +48,9 @@ func ImportPkg(path, dir string) (*build.Package, *Error) {
 	return p, nil
 }
 
+// ExtractPattern extracts all the comment in all the .go files from a specific package
+// and search for a specific pattern. Each occurrence produce a result that is sent in the channel.
+// Termination occurs when sending error or nil element in the channel.
 func ExtractPattern(p *build.Package, pattern string, resultChannel chan *SearchResult) {
 	for _, f := range p.GoFiles {
 		fname := filepath.Join(p.Dir, f)

@@ -75,7 +75,7 @@ func (l *logger) tagged() *logrus.Entry {
 	return appLogger.WithFields(l.fields)
 }
 
-// Application logger that should be initialized by server
+// Application logger that should be initialized by server.
 var appLogger *logrus.Logger
 
 // LoadAppLogger initialise the global application logger that all
@@ -87,7 +87,7 @@ func LoadAppLogger(c *Configuration) (*logrus.Logger, error) {
 	output := c.LogOutput
 	level := c.LogLevel
 
-	logrus.Printf("Logger settings with output: %v, level: %v", output, level)
+	logrus.Debugf("Logger settings with output: %v, level: %v", output, level)
 	logLevel, err := logrus.ParseLevel(level)
 	if err != nil {
 		return nil, err

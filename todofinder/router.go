@@ -10,7 +10,7 @@ import (
 	. "todofinder/todofinder/app"
 )
 
-// SearchResult HTTP Result
+// SearchResult HTTP Result.
 type SearchResultHttpResponse struct {
 	Result []SearchResult `json:"result"`
 }
@@ -43,6 +43,7 @@ func Router(ctx *fasthttp.RequestCtx) *Error {
 	return &Error{NOT_FOUND, Params{"resource": string(ctx.Path())}, nil}
 }
 
+// validateSearchHandler is the request validator for /search endpoint
 func validateSearchHandler(ctx *fasthttp.RequestCtx) *Error {
 	if !ctx.QueryArgs().Has("package") {
 		return &Error{BAD_PARAMETER, Params{"parameter": "package"}, nil}
@@ -52,6 +53,7 @@ func validateSearchHandler(ctx *fasthttp.RequestCtx) *Error {
 	return nil
 }
 
+// validateSearchHandler is the request handler for /search endpoint
 func searchHandler(ctx *fasthttp.RequestCtx) *Error {
 	searchResponse := SearchResultHttpResponse{}
 	packageName := string(ctx.QueryArgs().Peek("package"))
@@ -86,6 +88,5 @@ func JsonMarshal(ctx *fasthttp.RequestCtx, v interface{}) *Error {
 	if err != nil {
 		return &Error{INTERNAL_SERVER_ERROR, nil, err}
 	}
-
 	return nil
 }

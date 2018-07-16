@@ -58,7 +58,7 @@ func LoadConfiguration(filepath *string) (*Configuration, error) {
 	v.SetConfigType("yaml")
 	v.SetEnvPrefix("TODOFINDER")
 	v.AutomaticEnv()
-	logrus.Printf("Loading configuration from %v", v.ConfigFileUsed())
+	logrus.Debugf("Loading configuration from %v", v.ConfigFileUsed())
 
 	v.SetDefault("network", "tcp4")
 	v.SetDefault("listenOn", ":8080")

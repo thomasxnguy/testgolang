@@ -1,14 +1,12 @@
 package app
 
 import (
-	"time"
 	"github.com/valyala/fasthttp"
 )
 
 // InitRequest initialize the request with a request context and log access.
 func InitRequest(ctx *fasthttp.RequestCtx) error {
-	now := time.Now()
-	ac := NewRequestContext(now, nil, ctx)
+	ac := NewRequestContext(ctx)
 	ctx.SetUserValue("Context", ac)
 	logAccess(ctx)
 	return nil

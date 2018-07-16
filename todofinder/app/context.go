@@ -22,23 +22,24 @@ type requestContext struct {
 	now           time.Time // the time when the request is being processed
 }
 
-// RemoteAddress returns the IP address of the requester
+// RemoteAddress returns the IP address of the requester.
 func (rs *requestContext) RemoteAddress() string {
 	return rs.remoteAddress
 }
 
-// Now returns time when the request is being processed, used for concurrency operations
+// Now returns time when the request is being processed, used for concurrency operations.
 func (rs *requestContext) Now() time.Time {
 	return rs.now
 }
 
-// RequestID returns the ID of the current request
+// RequestID returns the ID of the current request.
 func (rs *requestContext) RequestID() string {
 	return rs.requestID
 }
 
 // NewRequestContext creates a new RequestContext with the current request information.
-func NewRequestContext(now time.Time, logger *logrus.Logger, ctx *fasthttp.RequestCtx) RequestContext {
+func NewRequestContext(ctx *fasthttp.RequestCtx) RequestContext {
+	now := time.Now()
 	requestUri := string(ctx.URI().RequestURI())
 	remoteIp := ctx.RemoteIP().String()
 	requestID := string(ctx.Request.Header.Peek(X_REQUEST_ID))

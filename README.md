@@ -73,8 +73,9 @@ Usage of server:
 $ go run todofinder/cmd/todofinder.go server -config ../conf/todofinder.yaml
 
 ```
+The application runs as an HTTP server at port 8080 (default). It provides the following RESTful endpoints:
 
-By default, application will run on port 8080
+* `GET /search`: search a specific pattern in all .go file from a package
 
 ##### Example API request
 
@@ -101,10 +102,13 @@ $ curl -XGET 'localhost:8080/search?package=fmt&amp;pattern=TODO' .
 ##### API Error codes
 
 
-| Command | Description |
+| Error Code | Description |
 | --- | --- |
-| git status | List all new or modified files |
-| git diff | Show file differences that haven't been staged |
-
-
-
+| NOT_FOUND | Resource was not found |
+| METHOD_NOT_ALLOWED| Call endpoint using a not supported method |
+| INTERNAL_SERVER_ERROR| An issue occurred server side |
+| UNAUTHORIZED| User is not authorized to call this resource |
+| BAD_PARAMETER| Call endpoint using a bad or missing parameter |
+| PACKAGE_NOT_FOUND| Cannot find the package to search on |
+| NO_SOURCE| The package does not contain valid source |
+| SOURCE_NOT_READABLE| The package .go source files are not readable |

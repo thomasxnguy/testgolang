@@ -10,7 +10,7 @@ import (
 	"fmt"
 )
 
-//Constant defining name of the service.
+// Constant defining name of the service.
 const (
 	ServerName = "todofinder"
 )
@@ -20,7 +20,8 @@ type Server struct {
 	log    *logrus.Logger
 }
 
-//Init initialize the server
+// Init initialize the server for todofinder API
+// Configutation and logger are mandatory parameters
 func (s *Server) Init(c *Configuration, l *logrus.Logger) error {
 	if c == nil || l == nil {
 		return fmt.Errorf("failed to initialize server, received nil parameters")
@@ -30,6 +31,7 @@ func (s *Server) Init(c *Configuration, l *logrus.Logger) error {
 	return nil
 }
 
+// Run todofinder API server
 func (s *Server) Run() error {
 	fhttps := &fasthttp.Server{
 		Handler: s.handler,
@@ -40,6 +42,7 @@ func (s *Server) Run() error {
 		return err
 	}
 
+	s.log.WithField("func", "Init").Info("Running Server")
 	if s.config.EnableTls {
 		if err := fhttps.ServeTLS(ln, s.config.CertFile, s.config.KeyFile); err != nil {
 			s.log.WithField("func", "Run").Fatal("Error when serving incoming connections")
@@ -51,13 +54,12 @@ func (s *Server) Run() error {
 			return err
 		}
 	}
-	//log info
 	return nil
 }
 
 func (s *Server) getListener() (net.Listener, error) {
 	ln, err := net.Listen(s.config.Network, s.config.ListenOn)
-	s.log.WithField("func", "getListener").Debug("Server using %s and listening to port %s", s.config.Network, s.config.ListenOn)
+	s.log.WithField("func", "Run").Infof("Start server in %s mode and listening to port %s", s.config.Network, s.config.ListenOn)
 	if err != nil {
 		//log
 		return nil, err
