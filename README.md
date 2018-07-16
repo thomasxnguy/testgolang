@@ -17,8 +17,11 @@ TODO： accept N and Ni independently?
 Installation
 ---
 
+The project use "dep", a prototype dependency management tool for Go.
+For more information, please visit https://github.com/golang/dep
 ```
-% go get -u github.com/..
+% go get -u github.com/m-rec/14d4017ddb43a7c0cb3ab4be9ea18cbc74ee15ab/todofinder
+% dep ensure
 ```
 
 Usage

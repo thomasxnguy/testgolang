@@ -3,9 +3,9 @@ package server
 import (
 	"flag"
 	"fmt"
-	. "todofinder/todofinder"
-	. "todofinder/todofinder/app"
-	. "todofinder/todofinder/error"
+	. "github.com/m-rec/14d4017ddb43a7c0cb3ab4be9ea18cbc74ee15ab/todofinder"
+	. "github.com/m-rec/14d4017ddb43a7c0cb3ab4be9ea18cbc74ee15ab/todofinder/app"
+	. "github.com/m-rec/14d4017ddb43a7c0cb3ab4be9ea18cbc74ee15ab/todofinder/error"
 )
 
 // Todofinder command tool properties for server mode.

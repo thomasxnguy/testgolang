@@ -1,11 +1,11 @@
 package todofinder_test
 
 import (
-	. "todofinder/todofinder"
+	. "github.com/m-rec/14d4017ddb43a7c0cb3ab4be9ea18cbc74ee15ab/todofinder"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	. "todofinder/todofinder/error"
-	. "todofinder/todofinder/app"
+	. "github.com/m-rec/14d4017ddb43a7c0cb3ab4be9ea18cbc74ee15ab/todofinder/error"
+	. "github.com/m-rec/14d4017ddb43a7c0cb3ab4be9ea18cbc74ee15ab/todofinder/app"
 	"github.com/valyala/fasthttp"
 )
 

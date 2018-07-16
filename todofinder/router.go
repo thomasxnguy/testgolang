@@ -5,9 +5,9 @@ import (
 	"strings"
 	"encoding/json"
 	"os"
-	. "todofinder/todofinder/error"
-	. "todofinder/todofinder/http"
-	. "todofinder/todofinder/app"
+	. "github.com/m-rec/14d4017ddb43a7c0cb3ab4be9ea18cbc74ee15ab/todofinder/error"
+	. "github.com/m-rec/14d4017ddb43a7c0cb3ab4be9ea18cbc74ee15ab/todofinder/http"
+	. "github.com/m-rec/14d4017ddb43a7c0cb3ab4be9ea18cbc74ee15ab/todofinder/app"
 )
 
 // SearchResult HTTP Result.
