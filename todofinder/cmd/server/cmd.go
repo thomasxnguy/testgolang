@@ -6,6 +6,8 @@ import (
 	. "github.com/m-rec/14d4017ddb43a7c0cb3ab4be9ea18cbc74ee15ab/todofinder"
 	. "github.com/m-rec/14d4017ddb43a7c0cb3ab4be9ea18cbc74ee15ab/todofinder/app"
 	. "github.com/m-rec/14d4017ddb43a7c0cb3ab4be9ea18cbc74ee15ab/todofinder/error"
+	"runtime"
+	"path"
 )
 
 // Todofinder command tool properties for server mode.
@@ -79,7 +81,12 @@ func command(opt *option) error {
 		return err
 	}
 	//error file location can be putted into global configuration file
-	err = LoadMessages("../conf/errors.yaml")
+	_, filename, _, ok := runtime.Caller(1)
+	if !ok {
+		fmt.Errorf("cannot get file directory")
+	}
+	errorFilePath := path.Join(path.Dir(filename), "../../conf/errors.yaml")
+	err = LoadMessages(errorFilePath)
 	if err != nil {
 		return err
 	}

@@ -8,6 +8,8 @@ import (
 	"io/ioutil"
 	"github.com/m-rec/14d4017ddb43a7c0cb3ab4be9ea18cbc74ee15ab/todofinder"
 	. "github.com/m-rec/14d4017ddb43a7c0cb3ab4be9ea18cbc74ee15ab/todofinder/error"
+	"runtime"
+	"path"
 )
 
 // Todofinder search mode command tool properties.
@@ -92,7 +94,12 @@ func Run(args []string) error {
 
 // Search main execution program.
 func command(opt *option) error {
-	err := LoadMessages("../conf/errors.yaml")
+	_, filename, _, ok := runtime.Caller(1)
+	if !ok {
+		fmt.Errorf("cannot get file directory")
+	}
+	errorFilePath := path.Join(path.Dir(filename), "../../conf/errors.yaml")
+	err := LoadMessages(errorFilePath)
 	if err != nil {
 		return err
 	}
