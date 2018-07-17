@@ -17,7 +17,7 @@ TODO： accept N and Ni independently?
 Installation
 ---
 
-The project use "dep", a prototype dependency management tool for Go.
+The project uses "dep", a prototype dependency management tool for Go.
 For more information, please visit https://github.com/golang/dep
 ```
 % go get -u github.com/m-rec/14d4017ddb43a7c0cb3ab4be9ea18cbc74ee15ab/todofinder
@@ -83,8 +83,8 @@ The application runs as an HTTP server at port 8080 (default). It provides the f
 ##### Example API request
 
 ```
-$ todofinder server -config ../conf/todofinder.yaml &amp;
-$ curl -XGET 'localhost:8080/search?package=fmt&amp;pattern=TODO' .
+$ todofinder server -config ../conf/todofinder.yaml &
+$ curl -XGET 'localhost:8080/search?package=fmt&pattern=TODO' .
 {
     "result": [
         {
@@ -115,3 +115,15 @@ $ curl -XGET 'localhost:8080/search?package=fmt&amp;pattern=TODO' .
 | PACKAGE_NOT_FOUND| Cannot find the package to search on |
 | NO_SOURCE| The package does not contain valid source |
 | SOURCE_NOT_READABLE| The package .go source files are not readable |
+
+
+##### Technology stack
+
+This service uses the following Go packages which can be easily replaced with your own favorite :
+
+* FastHttp : Lightweight http server which is 10x faster than net/http. Benchmark and source are [here](https://github.com/valyala/fasthttp)
+* Logrus : Structured logger for Go [here](https://github.com/sirupsen/logrus)
+* Gingko/Gomega : BDD Testing framework for golang [here](https://onsi.github.io/ginkgo)
+* Viper : Configuration solution for golang that can handle all types of formats and support watcher [here](https://github.com/spf13/viper)
+* Ozzo-Validation : Configurable and extensible data validator [here](https://github.com/go-ozzo/ozzo-validation)
+* Dep : Go dependency management tool [here](https://github.com/golang/dep)
