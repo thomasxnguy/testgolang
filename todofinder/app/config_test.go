@@ -37,7 +37,7 @@ var _ = Describe("Config", func() {
 			It("should not return error", func() {
 				config, err := LoadConfiguration(&configPath)
 				Expect(err).To(BeNil())
-				Expect(config.ListenOn).To(Equal(":8081"))
+				Expect(config.ListenOn).To(Equal(":8089"))
 				Expect(config.Network).To(Equal("tcp4"))
 				Expect(config.EnableTls).To(Equal(false))
 			})

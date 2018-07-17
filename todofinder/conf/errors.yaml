@@ -15,17 +15,17 @@ UNAUTHORIZED:
   status: 403
 
 BAD_PARAMETER:
-  message: "Parameter '{parameter}' is not correct or is missing"
+  message: "Parameter '{parameter}' is not correct or is missing."
   status: 400
 
 PACKAGE_NOT_FOUND:
-  message: "Cannot find specified package '{package}'"
+  message: "Cannot find specified package '{package}'."
   status: 404
 
 NO_SOURCE:
-  message: "No Buildable go source file : {source}"
+  message: "No Buildable go source file : {source}."
   status: 404
 
 SOURCE_NOT_READABLE:
-  message: "Cannot read source file : {source}"
+  message: "Cannot read source file : {source}."
   status: 500

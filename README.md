@@ -21,7 +21,7 @@ The project uses "dep", a prototype dependency management tool for Go.
 For more information, please visit https://github.com/golang/dep
 ```
 % go get -u github.com/m-rec/14d4017ddb43a7c0cb3ab4be9ea18cbc74ee15ab/todofinder
-% dep ensure
+% dep ensure (for Golang v1.9+)
 ```
 
 Usage
@@ -117,7 +117,8 @@ $ curl -XGET 'localhost:8080/search?package=fmt&pattern=TODO' .
 | SOURCE_NOT_READABLE| The package .go source files are not readable |
 
 
-##### Technology stack
+Packages
+---
 
 This service uses the following Go packages which can be easily replaced with your own favorite :
 
@@ -127,3 +128,21 @@ This service uses the following Go packages which can be easily replaced with yo
 * Viper : Configuration solution for golang that can handle all types of formats and support watcher [here](https://github.com/spf13/viper)
 * Ozzo-Validation : Configurable and extensible data validator [here](https://github.com/go-ozzo/ozzo-validation)
 * Dep : Go dependency management tool [here](https://github.com/golang/dep)
+
+
+Integration tests and benchmarks
+---
+
+This project contains a folder 'itest' containing integration tests and benchmark for todofinder service.
+It needs 
+* Baloo, an expressive and versatile end-to-end HTTP API testing made in Go : https://github.com/h2non/baloo
+* Golang v1.7+
+
+### Benchmark result
+
+```
+Benchmark_WrongEndpoint-4    	  500000	      3467 ns/op
+Benchmark_BadParameters-4    	  500000	      3632 ns/op
+Benchmark_BadMethod-4        	 1000000	      2332 ns/op
+Benchmark_SearchEndpoint-4   	  500000	      2569 ns/op
+```
