@@ -59,6 +59,13 @@ Usage of search:
        patttern to search
 ```
 
+Example
+```
+$ go run todofinder/cmd/todofinder.go -package fmt -pattern TODO 
+/usr/local/go/src/fmt/scan.go : 740 :
+TODO： accept N and Ni independently?
+```
+
 ### Server mode
 
 ```
@@ -73,7 +80,7 @@ Usage of server:
 
 #### Run in server mode
 ```
-$ go run todofinder/cmd/todofinder.go server -config ../conf/todofinder.yaml
+$ go run todofinder/cmd/todofinder.go server -config todofinder/conf/todofinder.yaml
 
 ```
 The application runs as an HTTP server at port 8080 (default). It provides the following RESTful endpoints:
@@ -83,8 +90,8 @@ The application runs as an HTTP server at port 8080 (default). It provides the f
 ##### Example API request
 
 ```
-$ todofinder server -config ../conf/todofinder.yaml &
-$ curl -XGET 'localhost:8080/search?package=fmt&pattern=TODO' .
+$ go run todofinder/cmd/todofinder.go server -config todofinder/conf/todofinder.yaml &
+$ curl -XGET 'localhost:8080/search?package=fmt&pattern=TODO'
 {
     "result": [
         {
