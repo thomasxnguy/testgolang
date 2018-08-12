@@ -41,6 +41,6 @@ func InitTodoFinder(config *Configuration) {
 		if rerr := server.Run(); rerr != nil {
 			fmt.Printf("[ERROR] Couldn't run todofinder: %v", err)
 		}
-		ch1 <- struct{}{}
+		//ch1 <- struct{}{}
 	}()
 }
