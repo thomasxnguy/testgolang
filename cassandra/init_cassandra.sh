@@ -1,7 +1,7 @@
 
 #!/bin/bash
 
-docker exec challenger_cassandra cqlsh -u cassandra -p cassandra -f challenger.cql
-docker exec challenger_cassandra cqlsh -u cassandra -p cassandra -f devauthrecords.cql
+docker exec challenger_cassandra cqlsh -u cassandra -p cassandra -f script.cql
+docker exec challenger_cassandra cqlsh -u cassandra -p cassandra -f records.cql
 
 

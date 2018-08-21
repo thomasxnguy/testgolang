@@ -1,8 +1,8 @@
 FROM cassandra:3.10
 
 COPY cassandra.yaml /etc/cassandra/cassandra.yaml
-COPY devauthrecords.cql /devauthrecords.cql
-COPY challenger.cql /challenger.cql
+COPY records.cql /records.cql
+COPY script.cql /script.cql
 
 VOLUME /var/lib/cassandra
 
