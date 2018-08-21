@@ -1,0 +1,26 @@
+version: '3.0'
+volumes:
+  kafka_data:
+services:
+  kafka:
+    container_name: kafka
+    image: mohamnag/kafka-zookeeper
+    ports:
+      - 9092:9092
+      - 2181:2181
+    volumes:
+      - kafka_data:/kafka
+  cassandra:
+    container_name: cassandra
+    build:
+      context: .
+    ports:
+      - 9160:9160
+      - 9042:9042
+      - 7199:7199
+      - 7000:7000
+      - 7001:7001
+    volumes:
+      - /tmp/docker/cassandra/data:/var/lib/cassandra
+    command: ["cassandra", "-f"]
+
