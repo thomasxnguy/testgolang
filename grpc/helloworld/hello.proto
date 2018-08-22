@@ -1,0 +1,50 @@
+syntax = "proto3";
+option java_multiple_files = true;
+option java_package = "io.grpc.examples.helloworld";
+option java_outer_classname = "HelloWorldProto";
+
+package helloworld;
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+
+
+// The greeting service definition.
+service Greeter {
+  // Sends a greeting
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+  rpc SayHello2 (HelloRequest2) returns (HelloReply) {}
+  rpc SayHello3 (HelloRequest3) returns (HelloReply) {}
+}
+
+// The request message containing the user's name.
+message HelloRequest {
+  oneof avatar {
+    string name = 1;
+    int64 id = 2;
+  }
+  google.protobuf.Struct definition = 3;
+  google.protobuf.Timestamp last_modified = 4;
+}
+
+message HelloRequest2 {
+  repeated HelloRequest list = 1;
+}
+
+message HelloRequest3 {
+    enum Corpus {
+      UNIVERSAL = 0;
+      WEB = 1;
+      IMAGES = 2;
+      LOCAL = 3;
+      NEWS = 4;
+      PRODUCTS = 5;
+      VIDEO = 6;
+    }
+    Corpus corpus = 1;
+}
+
+
+// The response message containing the greetings
+message HelloReply {
+  string message = 1;
+}
