@@ -1,3 +1,8 @@
+Cassandra for Golang
+===
+
+This folder contains code to interact with Cassandra in Golang.
+
 - Run the docker compose file with `docker-compose up` to start up zookeeper,
 kafka and cassandra (only docker needs to be installed).
 Use `docker-compose -f docker-compose-windows.yaml up -d` when you are on Windows 7 (with Docker toolbox).
